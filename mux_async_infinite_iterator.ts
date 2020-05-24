@@ -1,5 +1,4 @@
 // Copyright 2018-2020 the Deno authors. All rights reserved. MIT license.
-// A reworked MuxAsyncIterator which will stop only upon receiving an external signal
 import { Deferred, deferred } from "https://deno.land/std/async/deferred.ts";
 
 interface TaggedYieldedValue<T> {
@@ -10,6 +9,10 @@ interface TaggedYieldedValue<T> {
 /** The MuxAsyncInfiniteIterator class multiplexes multiple async iterators into a
  * single stream. It currently makes a few assumptions:
  * - The iterators do not throw.
+ * - The final result (the value returned and not yielded from the iterator)
+ *   does not matter; if there is any, it is discarded.
+ * It is based on the MuxAsyncIterator, but will finish only upon receiving an external signal
+ * instead of finishing whenever the added iterators have been exhausted.
  */
 export class MuxAsyncInfiniteIterator<T> implements AsyncIterable<T> {
   private yields: Array<TaggedYieldedValue<T>> = [];
