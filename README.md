@@ -47,6 +47,9 @@ try {
 ## Changelog
 GitHub [releases][changelog] is used for changelog entries.
 
+## Acknowledgements
+- Thanks to [zorbyte](https://github.com/zorbyte) for helping me understand enough about async iterators to implmenent the server
+
 ## License
 [MIT](LICENSE)
 
