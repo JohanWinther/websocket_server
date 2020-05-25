@@ -6,7 +6,7 @@ import {
 	HTTPOptions,
 	HTTPSOptions,
 } from "https://deno.land/std/http/server.ts";
-import { MuxAsyncInfiniteIterator } from "./mux_async_infinite_iterator.ts";
+import { Queue } from "./queue.ts";
 import {
 	acceptWebSocket,
 	WebSocket,
@@ -20,11 +20,11 @@ type WebSocketServerEvent = {
 
 export class WebSocketServer {
 	public sockets: Set<WebSocket>;
-	private mux: MuxAsyncInfiniteIterator<WebSocketServerEvent>;
+	private queue: Queue<WebSocketServerEvent>;
 
 	constructor(private httpServer?: Server) {
 		this.sockets = new Set();
-		this.mux = new MuxAsyncInfiniteIterator();
+		this.queue = new Queue();
 
 		if (this.httpServer) {
 			// Upgrade all incoming HTTP requests to WebSockets
@@ -36,8 +36,8 @@ export class WebSocketServer {
 		}
 	}
 
-	async close(): Promise<void> {
-		this.mux.stop = true;
+	async close() {
+		this.queue.stop();
 		// Close all sockets before killing the server
 		// to allow close frames to be sent through the sockets
 		const closePromises = [...this.sockets].map((socket) => socket.close());
@@ -47,34 +47,7 @@ export class WebSocketServer {
 		}
 	}
 
-	// Yields all WebSocket events on a single WebSocket.
-	private async *iterateWebSocketEvents(
-		socket: WebSocket,
-	): AsyncIterableIterator<WebSocketServerEvent> {
-		// TODO yield an event upon connection which also exposes the http request?
-		// yield { socket, event: "connection" } as WebSocketServerEvent;
-		for await (const event of socket) {
-			yield { socket, event } as WebSocketServerEvent;
-		}
-
-		this.untrackSocket(socket);
-		// TODO also try to close the socket here?
-		// try {
-		//   socket.close();
-		// } catch (e) {
-		//
-		// }
-	}
-
-	private trackSocket(socket: WebSocket): void {
-		this.sockets.add(socket);
-	}
-
-	private untrackSocket(socket: WebSocket): void {
-		this.sockets.delete(socket);
-	}
-
-	private async upgradeAllRequests(): Promise<void> {
+	private async upgradeAllRequests() {
 		if (this.httpServer) {
 			for await (const request of this.httpServer) {
 				this.handleUpgrade(request);
@@ -82,16 +55,17 @@ export class WebSocketServer {
 		}
 	}
 
-	// Upgrades any new HTTP request and adds it to the MuxAsyncInfiniteIterator
-	private async handleUpgrade(req: ServerRequest): Promise<void> {
+	// Upgrades any new HTTP request and start handling its events
+	private async handleUpgrade(req: ServerRequest) {
 		const { conn, r: bufReader, w: bufWriter, headers } = req;
 		try {
 			const socket = await acceptWebSocket(
 				{ conn, bufReader, bufWriter, headers },
 			);
 			this.trackSocket(socket);
-			this.mux.add(this.iterateWebSocketEvents(socket));
+			this.handleSocketEvents(socket);
 		} catch (err) {
+			console.error(err);
 			await req.respond({
 				status: 400, // Bad request
 				body: err.toString(),
@@ -99,8 +73,32 @@ export class WebSocketServer {
 		}
 	}
 
+	private trackSocket(socket: WebSocket) {
+		this.sockets.add(socket);
+	}
+
+	private untrackSocket(socket: WebSocket) {
+		this.sockets.delete(socket);
+	}
+
+	// Adds WebSocket events to the queue
+	private async handleSocketEvents(socket: WebSocket) {
+		// TODO add a connection event which also exposes the http request?
+		for await (const event of socket) {
+			this.queue.add({ socket, event } as WebSocketServerEvent);
+		}
+		// When socket is closed, the for await loop will be finished
+		this.untrackSocket(socket);
+		// TODO also try to close the socket here if loop breaks due to error?
+		// try {
+		//   socket.close();
+		// } catch (e) {
+		//
+		// }
+	}
+
 	[Symbol.asyncIterator](): AsyncIterableIterator<WebSocketServerEvent> {
-		return this.mux.iterate();
+		return this.queue.iterate();
 	}
 }
 

@@ -3,11 +3,17 @@
 A WebSocket server library for [Deno](https://deno.land).
 
 The [raison d'être](https://en.wiktionary.org/wiki/raison_d%27%C3%AAtre) for this library is to provide a unified async iterator for the events of all connected WebSocket clients.
-The way it does this is through a custom [MuxAsyncInfiniteIterator](mux_async_infinite_iterator.ts) (based on the [MuxAsyncIterator](https://deno.land/std/async/mux_async_iterator.ts)), which multiplexes multiple async iterators into a single stream.
 
 **Note**: This WebSocket server is **not** an `EventEmitter` (i.e. it does not use events with callbacks like [websockets/ws](https://github.com/websockets/ws)).
 Instead, it specifies the [asyncIterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator) symbol and should be used in conjunction with a [`for await...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) loop, just like the [Deno http server](https://deno.land/std/http/server.ts).
-The iterator yields `WebSocketServerEvent`s which contain both the `WebSocketEvent` and the corresponding `WebSocket` from which the event was received.
+The iterator return values are
+```typescript
+type WebSocketServerEvent = {
+	event: WebSocketEvent;
+	socket: WebSocket;
+};
+```
+where `socket` is the WebSocket from which the data was received on.
 
 ## Usage
 
