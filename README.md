@@ -16,7 +16,7 @@ The iterator yields `WebSocketServerEvent`s which contain both the `WebSocketEve
 import { serve } from 'https://deno.land/x/websocket_server/mod.ts'
 const server = serve(":8080");
 for await (const { event } of server) {
-  console.log(event);
+	console.log(event);
 }
 ```
 
@@ -32,15 +32,15 @@ Here is a simple example:
 ```typescript
 import { connectWebSocket } from "https://deno.land/std/ws/mod.ts";
 try {
-  const socket = await connectWebSocket("ws://127.0.0.1:8080");
-  for await (const event of socket) {
-    console.log(event);
-    if (typeof event === "string" && event === "Who is this?") {
-      socket.send("It is me, a simple WebSocket client.");
-    }
-  }
+	const socket = await connectWebSocket("ws://127.0.0.1:8080");
+	for await (const event of socket) {
+		console.log(event);
+		if (typeof event === "string" && event === "Who is this?") {
+			socket.send("It is me, a simple WebSocket client.");
+		}
+	}
 } catch (err) {
-  console.error(`Could not connect to WebSocket: '${err}'`);
+	console.error(`Could not connect to WebSocket: '${err}'`);
 }
 ```
 
