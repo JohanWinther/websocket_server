@@ -40,7 +40,13 @@ export class WebSocketServer {
 		this.queue.stop();
 		// Close all sockets before killing the server
 		// to allow close frames to be sent through the sockets
-		const closePromises = [...this.sockets].map((socket) => socket.close());
+		const closePromises = [...this.sockets].map((socket) => {
+			try {
+				return socket.close();
+			} catch (e) {
+				return Promise.resolve();
+			}
+		});
 		await Promise.all(closePromises);
 		if (this.httpServer) {
 			this.httpServer.close();
