@@ -12,12 +12,15 @@ export class Queue<T> {
 	}
 
 	public add(item: T) {
-		this.queue.push(item);
-		this.signal.resolve();
+		if (!this.stopSignal) {
+			this.queue.push(item);
+			this.signal.resolve();
+		}
 	}
 
 	public stop() {
 		this.stopSignal = true;
+		this.signal.resolve();
 	}
 
 	// Generator function which returns a Generator when called
@@ -27,7 +30,7 @@ export class Queue<T> {
 			await this.signal;
 
 			// Note that while we're looping over the queue, new items may be added
-			for (let i = 0; i < this.queue.length; i++) {
+			for (let i = 0; i < this.queue.length && !this.stopSignal; i++) {
 				yield this.queue[i];
 			}
 			// Clear the queue and reset the `signal` promise
