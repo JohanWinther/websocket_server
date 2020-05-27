@@ -62,7 +62,7 @@ export class WebSocketServer {
 	}
 
 	// Upgrades any new HTTP request and start handling its events
-	private async handleUpgrade(req: ServerRequest) {
+	public async handleUpgrade(req: ServerRequest) {
 		const { conn, r: bufReader, w: bufWriter, headers } = req;
 		try {
 			const socket = await acceptWebSocket(
