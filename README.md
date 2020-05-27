@@ -10,7 +10,7 @@ The [raison d'être](https://en.wiktionary.org/wiki/raison_d%27%C3%AAtre) for th
 
 **Note**: This WebSocket server is **not** an `EventEmitter` (i.e. it does not use events with callbacks like [websockets/ws](https://github.com/websockets/ws)).
 Instead, it specifies the [asyncIterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator) symbol and should be used in conjunction with a [`for await...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) loop, just like the [Deno http server](https://deno.land/std/http/server.ts).
-The iterator return values are
+The iterator return values are of
 ```typescript
 type WebSocketServerEvent = {
 	event: WebSocketEvent;
@@ -23,10 +23,70 @@ where `socket` is the WebSocket from which the data was received on.
 
 ### Simple server
 ```typescript
-import { serve } from 'https://deno.land/x/websocket_server/mod.ts'
+import { serve } from "https://deno.land/x/websocket_server/mod.ts";
 const server = serve(":8080");
 for await (const { event } of server) {
 	console.log(event);
+}
+```
+
+### Simple server with handler
+```typescript
+import { listenAndServe } from "https://deno.land/x/websocket_server/mod.ts";
+
+listenAndServe(":8080", ({ socket, event }) => {
+	console.log(socket.conn.rid, event);
+});
+```
+
+### Using an existing HTTP server
+```typescript
+import { serve } from "https://deno.land/std/http/server.ts";
+import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
+
+const httpServer = serve(":8080");
+const wss = new WebSocketServer(httpServer);
+for await (const { event, socket } of wss) {
+	console.log(event);
+	if (!socket.isClosed) {
+		socket.send("Hello, I am using the HTTP server!");
+	}
+}
+```
+
+### Multiple WebSocket servers sharing an existing HTTP server
+```typescript
+import { serve } from "https://deno.land/std/http/server.ts";
+import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
+
+async function serverHandler(wss: WebSocketServer, message: string) {
+	for await (const { event, socket } of wss) {
+		console.log(event);
+		if (!socket.isClosed) {
+			socket.send(message);
+		}
+	}
+}
+
+const httpServer = serve(":8080");
+const wss1 = new WebSocketServer();
+const wss2 = new WebSocketServer();
+serverHandler(wss1, "Received your message on server 1.");
+serverHandler(wss2, "Received your message on server 2.");
+
+for await (const req of httpServer) {
+	if (req.url === "/foo") {
+		wss1.handleUpgrade(req);
+	} else if (req.url === '/bar') {
+		wss2.handleUpgrade(req);
+	} else {
+		// Do stuff with your HTTP server e.g. close the connection
+		await req.respond({
+			body: "You are not welcome!",
+			status: 400,
+		});
+		req.conn.close();
+	}
 }
 ```
 
