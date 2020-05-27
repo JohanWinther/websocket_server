@@ -1,6 +1,10 @@
 # Deno WebSocket Server 🔌
-
-A WebSocket server library for [Deno](https://deno.land).
+<p align="center">
+	<img src="./sockie.svg">
+</p>
+<p align="center">
+A WebSocket server library for <a href="https://deno.land">Deno</a>.
+</p>
 
 The [raison d'être](https://en.wiktionary.org/wiki/raison_d%27%C3%AAtre) for this library is to provide a unified async iterator for the events of all connected WebSocket clients.
 
@@ -55,6 +59,7 @@ Changelog entries can be found at [releases](https://github.com/JohanWinther/web
 
 ## Acknowledgements
 - Thanks to [zorbyte](https://github.com/zorbyte) for helping me understand enough about async iterators to implmenent the server
+- The logo is based on ["Dino in the Rain"](https://github.com/denolib/high-res-deno-logo) by [@kevinkassimo](https://github.com/kevinkassimo) (MIT license).
 
 ## License
 [MIT](LICENSE)
