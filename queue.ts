@@ -1,7 +1,7 @@
 import { deferred, Deferred } from "https://deno.land/std/async/mod.ts";
 
 export class Queue<T> {
-	private stopSignal: Boolean;
+	private stopSignal: boolean;
 	private signal: Deferred<void>;
 	private queue: Array<T>;
 
