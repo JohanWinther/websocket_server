@@ -9,7 +9,7 @@ A WebSocket server library for <a href="https://deno.land">Deno</a>.
 The [raison d'être](https://en.wiktionary.org/wiki/raison_d%27%C3%AAtre) for this library is to provide a unified async iterator for the events of all connected WebSocket clients.
 
 **Note**: This WebSocket server is **not** an `EventEmitter` (i.e. it does not use events with callbacks like [websockets/ws](https://github.com/websockets/ws)).
-Instead, it specifies the [asyncIterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator) symbol and should be used in conjunction with a [`for await...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) loop, just like the [Deno http server](https://deno.land/std/http/server.ts).
+Instead, it specifies the [asyncIterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator) symbol and should be used in conjunction with a [`for await...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) loop, just like the [Deno http server](https://deno.land/std@0.53.0/http/server.ts).
 The iterator return values are of
 ```typescript
 type WebSocketServerEvent = {
@@ -41,7 +41,7 @@ listenAndServe(":8080", ({ socket, event }) => {
 
 ### Using an existing HTTP server
 ```typescript
-import { serve } from "https://deno.land/std/http/server.ts";
+import { serve } from "https://deno.land/std@0.53.0/http/server.ts";
 import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
 
 const httpServer = serve(":8080");
@@ -56,7 +56,7 @@ for await (const { event, socket } of wss) {
 
 ### Multiple WebSocket servers sharing an existing HTTP server
 ```typescript
-import { serve } from "https://deno.land/std/http/server.ts";
+import { serve } from "https://deno.land/std@0.53.0/http/server.ts";
 import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
 
 async function serverHandler(wss: WebSocketServer, message: string) {
@@ -96,11 +96,11 @@ Check out the example [echo/broadcast server](example_server.ts).
 ## FAQ
 
 ### How do I create a WebSocket client?
-This library provides a class only for WebSocket servers, not WebSocket clients, because it is straightforward to create clients with the [std/ws](https://deno.land/std/ws/) module.
+This library provides a class only for WebSocket servers, not WebSocket clients, because it is straightforward to create clients with the [std/ws](https://deno.land/std@0.53.0/ws/) module.
 
 Here is a simple example:
 ```typescript
-import { connectWebSocket } from "https://deno.land/std/ws/mod.ts";
+import { connectWebSocket } from "https://deno.land/std@0.53.0/ws/mod.ts";
 try {
 	const socket = await connectWebSocket("ws://127.0.0.1:8080");
 	for await (const event of socket) {
