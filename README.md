@@ -1,6 +1,6 @@
 # Deno WebSocket Server 🔌
 <p align="center">
-	<img src="./sockie.svg">
+  <img src="./sockie.svg">
 </p>
 <p align="center">
 A WebSocket server library for <a href="https://deno.land">Deno</a>.
@@ -13,8 +13,8 @@ Instead, it specifies the [asyncIterator](https://developer.mozilla.org/en-US/do
 The iterator return values are of
 ```typescript
 type WebSocketServerEvent = {
-	event: WebSocketEvent;
-	socket: WebSocket;
+  event: WebSocketEvent;
+  socket: WebSocket;
 };
 ```
 where `socket` is the WebSocket from which the data was received on.
@@ -26,7 +26,7 @@ where `socket` is the WebSocket from which the data was received on.
 import { serve } from "https://deno.land/x/websocket_server/mod.ts";
 const server = serve(":8080");
 for await (const { event } of server) {
-	console.log(event);
+  console.log(event);
 }
 ```
 
@@ -35,7 +35,7 @@ for await (const { event } of server) {
 import { listenAndServe } from "https://deno.land/x/websocket_server/mod.ts";
 
 listenAndServe(":8080", ({ socket, event }) => {
-	console.log(socket.conn.rid, event);
+  console.log(socket.conn.rid, event);
 });
 ```
 
@@ -47,10 +47,10 @@ import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
 const httpServer = serve(":8080");
 const wss = new WebSocketServer(httpServer);
 for await (const { event, socket } of wss) {
-	console.log(event);
-	if (!socket.isClosed) {
-		socket.send("Hello, I am using the HTTP server!");
-	}
+  console.log(event);
+  if (!socket.isClosed) {
+    socket.send("Hello, I am using the HTTP server!");
+  }
 }
 ```
 
@@ -60,12 +60,12 @@ import { serve } from "https://deno.land/std@0.53.0/http/server.ts";
 import { WebSocketServer } from "https://deno.land/x/websocket_server/mod.ts";
 
 async function serverHandler(wss: WebSocketServer, message: string) {
-	for await (const { event, socket } of wss) {
-		console.log(event);
-		if (!socket.isClosed) {
-			socket.send(message);
-		}
-	}
+  for await (const { event, socket } of wss) {
+    console.log(event);
+    if (!socket.isClosed) {
+      socket.send(message);
+    }
+  }
 }
 
 const httpServer = serve(":8080");
@@ -75,18 +75,18 @@ serverHandler(wss1, "Received your message on server 1.");
 serverHandler(wss2, "Received your message on server 2.");
 
 for await (const req of httpServer) {
-	if (req.url === "/foo") {
-		wss1.handleUpgrade(req);
-	} else if (req.url === '/bar') {
-		wss2.handleUpgrade(req);
-	} else {
-		// Do stuff with your HTTP server e.g. close the connection
-		await req.respond({
-			body: "You are not welcome!",
-			status: 400,
-		});
-		req.conn.close();
-	}
+  if (req.url === "/foo") {
+    wss1.handleUpgrade(req);
+  } else if (req.url === '/bar') {
+    wss2.handleUpgrade(req);
+  } else {
+    // Do stuff with your HTTP server e.g. close the connection
+    await req.respond({
+      body: "You are not welcome!",
+      status: 400,
+    });
+    req.conn.close();
+  }
 }
 ```
 
@@ -102,15 +102,15 @@ Here is a simple example:
 ```typescript
 import { connectWebSocket } from "https://deno.land/std@0.53.0/ws/mod.ts";
 try {
-	const socket = await connectWebSocket("ws://127.0.0.1:8080");
-	for await (const event of socket) {
-		console.log(event);
-		if (typeof event === "string" && event === "Who is this?") {
-			socket.send("It is me, a simple WebSocket client.");
-		}
-	}
+  const socket = await connectWebSocket("ws://127.0.0.1:8080");
+  for await (const event of socket) {
+    console.log(event);
+    if (typeof event === "string" && event === "Who is this?") {
+      socket.send("It is me, a simple WebSocket client.");
+    }
+  }
 } catch (err) {
-	console.error(`Could not connect to WebSocket: '${err}'`);
+  console.error(`Could not connect to WebSocket: '${err}'`);
 }
 ```
 
