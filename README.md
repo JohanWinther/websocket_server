@@ -3,6 +3,9 @@
   <img src="./sockie.svg">
 </p>
 <p align="center">
+	<a href="https://github.com/JohanWinther/websocket_server/actions"><img src="https://github.com/JohanWinther/websocket_server/workflows/CI/badge.svg"></a>
+</p>
+<p align="center">
 A WebSocket server library for <a href="https://deno.land">Deno</a>.
 </p>
 
