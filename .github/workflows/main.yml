@@ -7,29 +7,15 @@ on:
     branches: [ master ]
 jobs:
   build:
-    runs-on: ubuntu-16.04
-    name: Tests
+    runs-on: ubuntu-latest
+    name: Run tests
     steps:
       - uses: actions/checkout@master
       - name: Setup Deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: 1.x
+          deno-version: v1.x
       - run: deno --version
 
-      - name: Unit tests
-        run: echo "Running unit tests"
-
-      - name: Benchmark
-        run: echo "Running benchmark"
-
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'JohanWinther/websocket_server'
-        run: echo "Would have released as ${{ github.ref }}"
-        #uses: actions/create-release@latest
-        #env:
-        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #with:
-        #  tag_name: ${{ github.ref }}
-        #  release_name: ${{ github.ref }}
-        #  draft: true
+      - name: Run unit tests
+        run: deno test --allow-net
