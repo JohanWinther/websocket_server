@@ -118,7 +118,7 @@ try {
 Changelog entries can be found at [releases](https://github.com/JohanWinther/websocket-server/releases).
 
 ## Acknowledgements
-- Thanks to [zorbyte](https://github.com/zorbyte) for helping me understand enough about async iterators to implmenent the server
+- Thanks to [zorbyte](https://github.com/zorbyte) for helping me understand enough about async iterators to implement the server.
 - The logo is based on ["Dino in the Rain"](https://github.com/denolib/high-res-deno-logo) by [@kevinkassimo](https://github.com/kevinkassimo) (MIT license).
 
 ## License
