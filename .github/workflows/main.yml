@@ -8,15 +8,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-16.04
-    strategy:
-      matrix:
-        deno: [1.x]
-    name: test ${{ matrix.deno }}
+    name: Tests
     steps:
       - uses: actions/checkout@master
       - name: Setup Deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: ${{ matrix.deno }}
+          deno-version: 1.x
       - run: deno --version
-      - run: deno test --allow-net
+
+      - name: Unit tests
+        run: echo "Running unit tests"
+
+      - name: Benchmark
+        run: echo "Running benchmark"
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'JohanWinther/websocket_server'
+        run: echo "Would have released as ${{ github.ref }}"
+        #uses: actions/create-release@latest
+        #env:
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #with:
+        #  tag_name: ${{ github.ref }}
+        #  release_name: ${{ github.ref }}
+        #  draft: true
