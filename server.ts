@@ -5,13 +5,13 @@ import {
 	ServerRequest,
 	HTTPOptions,
 	HTTPSOptions,
-} from "https://deno.land/std@0.53.0/http/server.ts";
+} from "https://deno.land/std@0.83.0/http/server.ts";
 import { Queue } from "./queue.ts";
 import {
 	acceptWebSocket,
 	WebSocket,
 	WebSocketEvent,
-} from "https://deno.land/std@0.53.0/ws/mod.ts";
+} from "https://deno.land/std@0.83.0/ws/mod.ts";
 
 type WebSocketServerEvent = {
 	event: WebSocketEvent;

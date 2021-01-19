@@ -1,12 +1,12 @@
 import {
 	assertEquals, assertNotEquals,
-} from "https://deno.land/std@0.53.0/testing/asserts.ts";
+} from "https://deno.land/std@0.83.0/testing/asserts.ts";
 import { delay } from "https://deno.land/std@0.53.0/async/delay.ts";
 import {
 	connectWebSocket,
 	WebSocket,
 	WebSocketEvent,
-} from "https://deno.land/std@0.53.0/ws/mod.ts";
+} from "https://deno.land/std@0.83.0/ws/mod.ts";
 import { serve, WebSocketServer } from "./server.ts";
 
 const { test } = Deno;
