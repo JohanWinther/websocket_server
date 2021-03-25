@@ -70,6 +70,7 @@ export class WebSocketServer {
 			);
 			this.trackSocket(socket);
 			this.handleSocketEvents(socket);
+			return socket;
 		} catch (err) {
 			console.error(err);
 			await req.respond({
