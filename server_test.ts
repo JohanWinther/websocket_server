@@ -33,7 +33,7 @@ test("that a `WebSocketServer` receives events from a client", async () => {
 	const results: { socket: WebSocket; event: WebSocketEvent; }[] = [];
 	saveIterationResults(results, server);
 
-	const msgsPerClient = 3;
+	const msgsPerClient = 4; // The three below plus "connection"
 	const client1 = new WebSocket(`ws://127.0.0.1:${port}`);
 	await new Promise(resolve => client1.addEventListener('open', resolve))
 	const client2 = new WebSocket(`ws://127.0.0.1:${port}`);
@@ -60,12 +60,14 @@ test("that a `WebSocketServer` receives events from a client", async () => {
 	assertEquals(results[1].socket, results[5].socket);
 	assertNotEquals(results[0].socket, results[1].socket);
 
-	assertEquals(results[0].event, "client 1");
-	assertEquals(results[1].event, "client 2");
-	assertEquals(results[2].event, new Uint8Array([1, 2, 3]));
-	assertEquals(results[3].event, new Uint8Array([4, 5, 6]));
-	assertEquals(results[4].event, { code: 3001, reason: "done" });
-	assertEquals(results[5].event, { code: 3002, reason: "done" });
+	assertEquals(results[0].event, "connection"); // client1
+	assertEquals(results[1].event, "connection"); // client2
+	assertEquals(results[2].event, "client 1");
+	assertEquals(results[3].event, "client 2");
+	assertEquals(results[4].event, new Uint8Array([1, 2, 3]));
+	assertEquals(results[5].event, new Uint8Array([4, 5, 6]));
+	assertEquals(results[6].event, { code: 3001, reason: "done" });
+	assertEquals(results[7].event, { code: 3002, reason: "done" });
 
 	await server.close();
 });

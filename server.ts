@@ -90,9 +90,10 @@ export class WebSocketServer {
 
 	// Adds WebSocket events to the queue
 	private async handleSocketEvents(socket: WebSocket) {
-		// TODO add a connection event which also exposes the http request?
+		// TODO also expose the http request?
+		this.queue.add({ event: 'connection', socket });
 		for await (const event of socket) {
-			this.queue.add({ socket, event } as WebSocketServerEvent);
+			this.queue.add({ socket, event });
 		}
 		// When socket is closed, the for await loop will be finished
 		this.untrackSocket(socket);
