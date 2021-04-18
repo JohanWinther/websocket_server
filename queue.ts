@@ -1,4 +1,4 @@
-import { deferred, Deferred } from "https://deno.land/std@0.89.0/async/mod.ts";
+import { deferred, Deferred } from "https://deno.land/std@0.92.0/async/mod.ts";
 
 export class Queue<T> {
 	private stopSignal: boolean;

@@ -3,4 +3,4 @@ export {
 	isWebSocketPingEvent,
 	isWebSocketPongEvent,
 	isWebSocketCloseEvent,
-} from "https://deno.land/std@0.89.0/ws/mod.ts";
+} from "https://deno.land/std@0.92.0/ws/mod.ts";
